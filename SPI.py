@@ -181,10 +181,26 @@ for j in range(4):
         # new drought score = drought score*drought ratio change
         ratiochange = drought/droughthist
         nscore = score*ratiochange
+        odroughthazard = np.array(score)
+        odroughthazard[odroughthazard<=8]=1
+        odroughthazard[odroughthazard>18]=3
+        odroughthazard[odroughthazard>8]=2
+        ndroughthazard = np.array(nscore)
+        ndroughthazard[ndroughthazard<=8]=1
+        ndroughthazard[ndroughthazard>18]=3
+        ndroughthazard[ndroughthazard>8]=2
     
         # drought risk matrix with water demand
         demand = np.array([48.5, 188.1, 89.1, 120.4, 27.1, 27.1, 20.8, 134.5,
                            39.6, 17, 27.2, 14.6, 14.6, 95.3, 149, 20, 19.3, 10.8, 7.4, 2.5])
+        demandhl=np.array(demand)
+        demandhl[demandhl<=75]=1
+        demandhl[demandhl>75]=2
+        risk=ndroughthazard*demandhl
+        risklv=np.nan(risk.shap)
+        risklv[risklv<=2]=1
+        risklv[risklv=6]=3
+        risklv[risk<]
         # modified drought score vs water demand plot
         fig, ax = plt.subplots(figsize=(12, 7))
         plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
