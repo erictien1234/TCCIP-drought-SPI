@@ -73,10 +73,12 @@ for county in countylist:
     dfSPIstd.to_csv('TCCIP drought SPI/result/'+county+'_SPI3std.csv')
     print(county+' historical SPI3, mean, std done.')
 
-futureyear=[range(2021,2041),range(2041,2061),range(2061,2081),range(2081,2101)]
-futureyearn=['20212040','20412060','20612080','20812100']
+futureyear = [range(2021, 2041), range(2041, 2061),
+              range(2061, 2081), range(2081, 2101)]
+futureyearn = ['20212040', '20412060', '20612080', '20812100']
 for county in countylist:
-    dfSPI = [pd.DataFrame([]),pd.DataFrame([]),pd.DataFrame([]),pd.DataFrame([])]
+    dfSPI = [pd.DataFrame([]), pd.DataFrame(
+        []), pd.DataFrame([]), pd.DataFrame([])]
     rcplist = ['rcp26', 'rcp45', 'rcp60', 'rcp85']
     for rcp in rcplist:
         scenariolist = []
@@ -114,7 +116,8 @@ for county in countylist:
                 #dfSPIhist=pd.concat([dfSPIhist, historicalSPI3], axis=1)
                 print(county+' '+rcp+' '+scenario+' '+futureyearn[j]+' done.')
     for j in range(4):
-        dfSPI[j].to_csv('TCCIP drought SPI/result/'+county+'_'+futureyearn[j]+'_SPI3.csv')
+        dfSPI[j].to_csv('TCCIP drought SPI/result/'+county +
+                        '_'+futureyearn[j]+'_SPI3.csv')
 # %% Drought score
 countylist = ['基隆市', '臺北市', '新北市', '桃園市', '新竹市', '新竹縣', '苗栗縣', '臺中市', '彰化縣',
               '南投縣', '雲林縣', '嘉義縣', '嘉義市', '臺南市', '高雄市', '屏東縣', '宜蘭縣', '花蓮縣', '臺東縣', '澎湖縣']
@@ -130,7 +133,7 @@ droughtscore20022021.index = ['Y', 'O', 'R', 'Score']
 
 # %% SPI3 < -1 or -2 ratio from Nov. to Apr.
 modelist = ["rcp26", "rcp85", "all"]  # rcp26, rcp85, all
-futureyearn=['20212040','20412060','20612080','20812100']
+futureyearn = ['20212040', '20412060', '20612080', '20812100']
 for j in range(4):
     for mode in modelist:
         droughthist, sdroughthist, drought, sdrought = [], [], [], []
@@ -147,13 +150,16 @@ for j in range(4):
             if mode != 'all':
                 for i in range(len(dfSPI1104.columns)-1, -1, -1):
                     if dfSPI1104.columns[i][-5:] != mode:
-                        dfSPI1104 = dfSPI1104.drop(dfSPI1104.columns[i], axis=1)
+                        dfSPI1104 = dfSPI1104.drop(
+                            dfSPI1104.columns[i], axis=1)
                     else:
                         scenariolist.insert(0, dfSPI1104.columns[i][:-6])
                 dfSPI1104hist = dfSPI1104hist[scenariolist]
-    
-            drought.append((dfSPI1104.where(dfSPI1104 < -1).count()/120).mean())
-            sdrought.append((dfSPI1104.where(dfSPI1104 < -2).count()/120).mean())
+
+            drought.append(
+                (dfSPI1104.where(dfSPI1104 < -1).count()/120).mean())
+            sdrought.append(
+                (dfSPI1104.where(dfSPI1104 < -2).count()/120).mean())
             droughthist.append((dfSPI1104hist.where(
                 dfSPI1104hist < -1).count()/120).mean())
             sdroughthist.append((dfSPI1104hist.where(
@@ -165,13 +171,15 @@ for j in range(4):
         plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
         plt.rcParams['axes.unicode_minus'] = False
         ax.axvspan(0, 8, facecolor='green', zorder=-1, alpha=0.3, label='低危害')
-        ax.axvspan(8, 18, facecolor='orange', zorder=-1, alpha=0.3, label='中危害')
+        ax.axvspan(8, 18, facecolor='orange',
+                   zorder=-1, alpha=0.3, label='中危害')
         ax.axvspan(18, max(score)+1, facecolor='red',
                    zorder=-1, alpha=0.3, label='高危害')
         ax.set_xlim(0, max(score)+1)
         ax.set_xlabel('drought score')
         ax.set_ylabel('SPI<-1 ratio/SPI<-1 ratio in history')
-        ax.set_title(mode+' drought ratio change vs drought score, color as drought hazard level during '+ futureyearn[j])
+        ax.set_title(
+            mode+' drought ratio change vs drought score, color as drought hazard level during ' + futureyearn[j])
         ax.scatter(score, drought/droughthist)
         for i, label in enumerate(countylist):
             ax.text(score[i], drought[i]/droughthist[i], label)
@@ -182,25 +190,25 @@ for j in range(4):
         ratiochange = drought/droughthist
         nscore = score*ratiochange
         odroughthazard = np.array(score)
-        odroughthazard[odroughthazard<=8]=1
-        odroughthazard[odroughthazard>18]=3
-        odroughthazard[odroughthazard>8]=2
+        odroughthazard[odroughthazard <= 8] = 1
+        odroughthazard[odroughthazard > 18] = 3
+        odroughthazard[odroughthazard > 8] = 2
         ndroughthazard = np.array(nscore)
-        ndroughthazard[ndroughthazard<=8]=1
-        ndroughthazard[ndroughthazard>18]=3
-        ndroughthazard[ndroughthazard>8]=2
-    
+        ndroughthazard[ndroughthazard <= 8] = 1
+        ndroughthazard[ndroughthazard > 18] = 3
+        ndroughthazard[ndroughthazard > 8] = 2
+
         # drought risk matrix with water demand
         demand = np.array([48.5, 188.1, 89.1, 120.4, 27.1, 27.1, 20.8, 134.5,
                            39.6, 17, 27.2, 14.6, 14.6, 95.3, 149, 20, 19.3, 10.8, 7.4, 2.5])
-        demandhl=np.array(demand)
-        demandhl[demandhl<=75]=1
-        demandhl[demandhl>75]=2
-        risk=ndroughthazard*demandhl
-        risklv=np.nan(risk.shap)
-        risklv[risklv<=2]=1
-        risklv[risklv=6]=3
-        risklv[risk<]
+        demandhl = np.array(demand)
+        demandhl[demandhl <= 75] = 1
+        demandhl[demandhl > 75] = 2
+        risk = ndroughthazard*demandhl
+        risklv = np.zeros(risk.shape)
+        risklv[risk == 6] = 3
+        risklv[risk < 6] = 2
+        risklv[risk <= 2] = 1
         # modified drought score vs water demand plot
         fig, ax = plt.subplots(figsize=(12, 7))
         plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
@@ -210,21 +218,28 @@ for j in range(4):
         ax.set_ylim(0, max(nscore)+5)
         ax.set_xlabel('water demand')
         ax.set_ylabel('modified drought score')
-        ax.set_title(mode+ ' modified drought score vs water demand, color as drought risk level during '+futureyearn[j])
+        ax.set_title(
+            mode + ' modified drought score vs water demand, color as drought risk level during '+futureyearn[j])
         for i, label in enumerate(countylist):
             plt.text(demand[i], nscore[i], label)
         ax.grid()
-        polyg = Polygon([(0, 18), (75, 18), (75, 8), (max(demand)+20, 8), (max(demand)+20, 0),(0,0)],facecolor='g',alpha=0.3,zorder=-1,label='低風險')
-        polyo = Polygon([(0, max(nscore)+5), (75, max(nscore)+5), (75, 18), (max(demand)+20, 18), (max(demand)+20, 8),(75,8),(75,18),(0,18)],facecolor='orange',alpha=0.3,zorder=-1,label='中風險')
-        polyr = Polygon([(75, max(nscore)+5), (max(demand)+20,max(nscore)+5), (max(demand)+20, 18), (75, 18)], facecolor='r', alpha=0.3,zorder=-1,label='高風險')
+        polyg = Polygon([(0, 18), (75, 18), (75, 8), (max(demand)+20, 8), (max(
+            demand)+20, 0), (0, 0)], facecolor='g', alpha=0.3, zorder=-1, label='低風險')
+        polyo = Polygon([(0, max(nscore)+5), (75, max(nscore)+5), (75, 18), (max(demand)+20, 18), (max(
+            demand)+20, 8), (75, 8), (75, 18), (0, 18)], facecolor='orange', alpha=0.3, zorder=-1, label='中風險')
+        polyr = Polygon([(75, max(nscore)+5), (max(demand)+20, max(nscore)+5), (max(
+            demand)+20, 18), (75, 18)], facecolor='r', alpha=0.3, zorder=-1, label='高風險')
         ax.add_patch(polyg)
         ax.add_patch(polyo)
         ax.add_patch(polyr)
         ax.legend()
         plt.show()
         
-        outputdf=pd.DataFrame([drought,sdrought,droughthist,sdroughthist,score,nscore,demand],columns=countylist,index=['drought','severe drought', 'historical drought','historical severe drought', 'drought score','modified drought score', 'water demand'])
-        outputdf.to_csv('TCCIP drought SPI/result/drought indicators_'+mode+'_'+futureyearn[j]+'.csv')
+        #level: higher means more severe
+        outputdf = pd.DataFrame([drought, sdrought, droughthist, sdroughthist, score, nscore, demand, odroughthazard, ndroughthazard, demandhl, risk, risklv], columns=countylist, index=['drought', 'severe drought', 'historical drought',
+                                'historical severe drought', 'drought score', 'modified drought score', 'water demand', 'original drought hazard level', 'future drought hazard level', 'water demand level(2=high, 1=low)', 'drought risk','risk level'])
+        outputdf.to_csv(
+            'TCCIP drought SPI/result/drought indicators_'+mode+'_'+futureyearn[j]+'.csv')
 #
 '''
 fig, ax = plt.subplots(figsize=(12,7))
